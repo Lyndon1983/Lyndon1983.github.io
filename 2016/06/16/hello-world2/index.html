@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Refactor if .. elseif | Hello Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+      
+        <a class="active" href="/.">home</a>
+        
+
+      
+  
+      
+        <a href="/archives">archive</a>
+      
+  
+      
+        <a href="/about">about</a>
+      
+  
+      
+        <a href="/atom.xml">rss</a>
+      
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/06/16/hello-world2/">Refactor if .. elseif</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 16 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpecialConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase, $isFill = true , $isUpper = true)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        $baseConvert = (<span class="keyword">new</span> ToBase32Convert)</span><br><span class="line">                    -&gt;setNext(<span class="keyword">new</span> FromBase32Convert)</span><br><span class="line">                    -&gt;setNext(<span class="keyword">new</span> ToBase26Convert)</span><br><span class="line">                    -&gt;setNext(<span class="keyword">new</span> FromBase32Convert)</span><br><span class="line">                    -&gt;setNext(<span class="keyword">new</span> NormalBaseConvert);</span><br><span class="line">        $convertNumber = $baseConvert-&gt;convert($number, $fromBase, $toBase);</span><br><span class="line">        <span class="keyword">if</span>($isFill)</span><br><span class="line">        &#123;</span><br><span class="line">            $convertNumber = sprintf(<span class="string">'%04s'</span>, $convertNumber);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>($isUpper)</span><br><span class="line">        &#123;</span><br><span class="line">            $convertNumber = strtoupper($convertNumber);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $convertNumber;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $nextBaseConvert;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">abstract</span> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setNext</span><span class="params">(AbstractBaseConvert $nextBaseConvert)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;nextBaseConvert = $nextBaseConvert;</span><br><span class="line">        <span class="keyword">return</span>  <span class="keyword">$this</span>-&gt;nextBaseConvert;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ToBase32Convert</span> <span class="keyword">extends</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Implement convert() method.</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>($toBase == <span class="number">32</span>) &#123;</span><br><span class="line">            $patterns = [<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'l'</span>,<span class="string">'o'</span>];</span><br><span class="line">            $replacements = [<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>];</span><br><span class="line">            $number = base_convert($number, $fromBase, $toBase);</span><br><span class="line">            $number = sprintf(<span class="string">'%04s'</span>, $number);</span><br><span class="line">            <span class="keyword">foreach</span> ($patterns <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">                $patterns[ $key ] = sprintf(<span class="string">'/%s/'</span>, $val);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> preg_replace($patterns, $replacements, $number);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;nextBaseConvert-&gt;convert($number, $fromBase, $toBase);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FromBase32Convert</span> <span class="keyword">extends</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Implement convert() method.</span></span><br><span class="line">        <span class="keyword">if</span>($fromBase == <span class="number">32</span>) &#123;</span><br><span class="line">            $patterns = [<span class="string">'0'</span>, <span class="string">'1'</span>, <span class="string">'l'</span>, <span class="string">'o'</span>];</span><br><span class="line">            $replacements = [<span class="string">'w'</span>, <span class="string">'x'</span>, <span class="string">'y'</span>, <span class="string">'z'</span>];</span><br><span class="line">            <span class="keyword">foreach</span> ($replacements <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">                $replacements[ $key ] = sprintf(<span class="string">'/%s/'</span>, $val);</span><br><span class="line">            &#125;</span><br><span class="line">            $number = preg_replace($replacements, $patterns, $number);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> base_convert($number, $fromBase, $toBase);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;nextBaseConvert-&gt;convert($number, $fromBase, $toBase);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ToBase26Convert</span> <span class="keyword">extends</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Implement convert() method.</span></span><br><span class="line">        <span class="keyword">if</span>($toBase == <span class="number">26</span>) &#123;</span><br><span class="line">            $number = base_convert($number, $fromBase, $toBase);</span><br><span class="line">            $number = sprintf(<span class="string">'%04s'</span>, $number);</span><br><span class="line">            <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;strlen($number);$i++)&#123;</span><br><span class="line">                $num = base_convert($number[$i], $toBase, $fromBase);</span><br><span class="line">                $number[$i] = chr($num+<span class="number">65</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> $number;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;nextBaseConvert-&gt;convert($number, $fromBase, $toBase);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FromBase26Convert</span> <span class="keyword">extends</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Implement convert() method.</span></span><br><span class="line">        <span class="keyword">if</span>($toBase == <span class="number">26</span>) &#123;</span><br><span class="line">            $number = strtoupper($number);</span><br><span class="line">            <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;strlen($number);$i++)&#123;</span><br><span class="line">                $num = ord($number[$i]) - <span class="number">65</span>;</span><br><span class="line">                $number[$i] = base_convert($num, $toBase, $fromBase);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> base_convert($number, $fromBase, $toBase);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;nextBaseConvert-&gt;convert($number, $fromBase, $toBase);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NormalBaseConvert</span> <span class="keyword">extends</span> <span class="title">AbstractBaseConvert</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">convert</span><span class="params">($number, $fromBase, $toBase)</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> Implement convert() method.</span></span><br><span class="line">        <span class="keyword">return</span> base_convert($number, $fromBase, $toBase);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="http://7xrcp8.com1.z0.glb.clouddn.com/avatar.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> Hello Blog </p>
+      <p class="subtitle"> Test </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=gure class="highligh"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'http://yoursite.com/2016/06/16/hello-world2/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+</body>
+</html>
